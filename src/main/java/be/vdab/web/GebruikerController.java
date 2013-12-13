@@ -108,22 +108,25 @@ public class GebruikerController {
 	@RequestMapping(method = RequestMethod.DELETE, value = "{id}/verwijderen")
 	public ModelAndView delete(@PathVariable long id, HttpSession session) {
 		Gebruiker gebruiker = gebruikerService.read(id);
-                //gebruiker uit sessie verwijderen
-                session.invalidate();
-		if (gebruiker == null) {
+                if (gebruiker == null) {
 			return new ModelAndView("redirect:/");
 		}
 		ModelAndView modelAndView = new ModelAndView();
-		try {			
+		try {	
 			modelAndView.setViewName("gebruikers/verwijderd");
 			modelAndView.addObject("id", id);
 			modelAndView.addObject("emailAdres", gebruiker.getEmailAdres());
                         gebruikerService.delete(id);
+                        //gebruiker uit sessie verwijderen
+                        session.invalidate();
 		} catch (GebruikerHeeftNogKaraktersException e) {
-			modelAndView.setViewName("redirect:/gebruiker/{id}");
-			modelAndView.addObject("fout",
+			modelAndView.setViewName("gebruikers/foutVerwijderd");
+			modelAndView.addObject("id", id);
+			modelAndView.addObject("emailAdres", gebruiker.getEmailAdres());
+                        /*modelAndView.addObject("fout",
 					"Gebruiker is niet verwijderd, het bevat nog karakters");
-		}
+                        */
+                }
 		return modelAndView;
 	}
         
